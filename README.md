@@ -2,7 +2,7 @@
 
 Unsupervised discovery of latent phonation patterns in **ambulatory voice signals**
 captured by a neck-surface accelerometer, using **UMAP** dimensionality reduction
-followed by **HDBSCAN** density-based clustering — scaled to tens of millions of
+followed by **HDBSCAN** density-based clustering scaled to tens of millions of
 50 ms windows, and runnable on **CPU or GPU** from the same code.
 
 > Productionised from my undergraduate thesis (*Reducción de dimensión y clustering
@@ -17,7 +17,7 @@ Voice disorders caused by **vocal hyperfunction** (chronic, inefficient use of t
 laryngeal musculature) lack stable objective markers, and vocal behaviour varies
 enormously across a normal day. A neck accelerometer worn during daily life records
 phonation continuously (11,025 Hz), producing **millions of windows per subject with
-no per-window labels** — only a subject-level clinical condition is known.
+no per-window labels** only a subject-level clinical condition is known.
 
 This makes it a genuinely **unsupervised** problem: there is no ground truth to train
 against, so the pipeline must (a) find structure that is stable and interpretable, and
@@ -130,13 +130,13 @@ config/  data/  notebooks/
   extended to the full dataset via `transform` / `approximate_predict` in row batches.
   This keeps GPU/RAM bounded on datasets too large to fit at once.
 - **Internal validation only.** With no per-window ground truth, clustering quality is
-  judged with Silhouette, Davies-Bouldin and — because HDBSCAN produces irregular,
-  density-based clusters — **DBCV**, complemented by spatial (trustworthiness,
+  judged with Silhouette, Davies-Bouldin and because HDBSCAN produces irregular,
+  density-based clusters **DBCV**, complemented by spatial (trustworthiness,
   continuity, stress) and **temporal** (temporal stress, Shepard correlations)
   preservation metrics for the dimensionality reduction.
 - **One parametrised pipeline, not many scripts.** The research code had ~50
   near-duplicate scripts (10+ search variants, 11+ validation variants). Here the
-  variants — `noSing`, IBIF features, window vs subsequence scale — are **config
+  variants `noSing`, IBIF features, window vs subsequence scale are **config
   flags**, not copies.
 - **Backend abstraction over a hard GPU dependency.** The original code imported cuML
   at module top level and only ran on CUDA; the abstraction makes it reproducible
