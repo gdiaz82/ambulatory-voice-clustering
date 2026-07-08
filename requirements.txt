@@ -1,0 +1,23 @@
+# Preliminary, CPU-only runtime requirements.
+# The package itself is installed with `pip install -e .` (see pyproject.toml).
+# GPU acceleration (NVIDIA RAPIDS: cuml, cudf, cupy) is optional and installed
+# separately via conda — see environment.gpu.yml.
+
+numpy>=1.24
+pandas>=2.0
+pyarrow>=14.0
+scikit-learn>=1.3
+umap-learn>=0.5.5
+hdbscan>=0.8.33
+h5py>=3.9
+pyyaml>=6.0
+matplotlib>=3.7
+
+# Optional: hyperparameter search
+optuna>=3.4
+
+# Dev tooling
+pytest>=7.4
+ruff>=0.4
+black>=24.0
+mypy>=1.8

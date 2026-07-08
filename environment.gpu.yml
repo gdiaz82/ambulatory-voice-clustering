@@ -1,0 +1,21 @@
+# Optional GPU environment (NVIDIA RAPIDS). Requires a CUDA-capable GPU.
+# When this environment is active, the pipeline automatically uses the cuML
+# backend (UMAP / HDBSCAN on GPU). Otherwise it falls back to the CPU backend.
+#
+#   conda env create -f environment.gpu.yml
+#   conda activate avc-gpu
+#   pip install -e .
+name: avc-gpu
+channels:
+  - rapidsai
+  - conda-forge
+  - nvidia
+dependencies:
+  - python=3.11
+  - cuml=24.06
+  - cudf=24.06
+  - cupy
+  - cuda-version=12.2
+  - pip
+  - pip:
+      - -e .

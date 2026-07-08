@@ -1,0 +1,40 @@
+# ─── Data & model artifacts (never commit — datasets are ~35 GB) ───
+data/raw/*
+data/interim/*
+data/processed/*
+!data/**/.gitkeep
+*.parquet
+*.mat
+*.wav
+*.dat
+*.db
+*.csv
+outputs/
+figures/
+logs/
+
+# ─── Python ───
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# ─── Tooling caches ───
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ─── Environment / secrets ───
+.env
+
+# ─── OS / editor ───
+.DS_Store
+*.Zone.Identifier
+.idea/
+.vscode/

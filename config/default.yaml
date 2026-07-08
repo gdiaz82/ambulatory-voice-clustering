@@ -1,0 +1,77 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Default configuration for the ambulatory-voice-clustering pipeline.
+# Every value here can be overridden by an environment variable (see .env.example)
+# or by passing a different YAML file to the CLI (--config).
+# ─────────────────────────────────────────────────────────────────────────────
+
+seed: 42
+backend: auto            # cpu | gpu | auto
+
+paths:
+  raw_dir: data/raw            # per-subject folders of .mat files (HDF5)
+  interim_dir: data/interim    # master parquet lives here
+  processed_dir: data/processed
+  outputs_dir: outputs         # metrics tables, figures, fitted artifacts
+
+# ─── Features ────────────────────────────────────────────────────────────────
+# The 8 acoustic features used throughout the thesis pipeline.
+features:
+  acoustic:
+    - zcrall
+    - normpeakall
+    - spectralTiltall
+    - LHratioall
+    - level
+    - cppall
+    - freq
+    - H1H2all
+
+# ─── Ingestion (raw .mat -> master parquet) ──────────────────────────────────
+ingest:
+  max_days_per_week: 7
+  # Keep only windows recorded with voice activity.
+  require_recording_on: true
+  drop_singing: false          # noSing variant when true
+
+# ─── Feature engineering ─────────────────────────────────────────────────────
+features_engineering:
+  # "window" = raw 50 ms windows; "subsequence" = 1 s subsequences (median+std agg).
+  scale: window                # window | subsequence
+  subsequence:
+    length: 20                 # windows per subsequence (20 * 50 ms = 1 s)
+    stride: 10                 # 0.5 s hop (50% overlap)
+    nominal_delta_ms: 50.0
+    tolerance_ms: 25.0
+    max_gap_ms: 125.0          # a single missing window is tolerated
+    max_gaps: 1
+
+# ─── Model: UMAP -> HDBSCAN ──────────────────────────────────────────────────
+model:
+  umap:
+    n_components: 9         # thesis optimum (maximises DBCV)
+    n_neighbors: 50
+    min_dist: 0.05
+  hdbscan:
+    min_cluster_size: 250
+    min_samples: 100
+  # Fit on a time-balanced sample (stratified by `week`), then transform the
+  # full dataset in batches. Set fit_sample_per_group to null to fit on all rows.
+  fit_sample_per_group: 250000
+  transform_batch_size: 1000000
+
+# ─── Hyperparameter search ───────────────────────────────────────────────────
+search:
+  method: grid                 # grid | optuna
+  sample_per_group: 200000     # balanced sample the search is fit on
+  metric_sample_size: 10000    # rows used to score internal metrics (costly)
+  optuna_trials: 50
+  grid:
+    n_components: [2, 4, 6, 8]
+    n_neighbors: [15, 30, 50, 100]
+    min_dist: [0.05, 0.1]
+    min_cluster_size: [250]
+    min_samples: [100]
+
+# ─── Evaluation ──────────────────────────────────────────────────────────────
+evaluation:
+  preservation_sample_size: 5000
